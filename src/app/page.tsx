@@ -13,8 +13,8 @@ export default function Home() {
   const mlb_logo = 'images/mlb_logo.png'
 
   return (
-    <div className="flex flex-col items-center mt-16 min-h-screen">
-      <div className="w-1/2 text-center flex-grow">
+    <div className="flex flex-col items-center">
+      <div className="w-1/2 text-center flex-grow mt-16">
         <h1 className="text-4xl ">Sports Power Rankings Generator</h1>
         <p className="text-xl mt-4">
           Create your own power rankings for multiple sports leagues! Choose one below to get started.

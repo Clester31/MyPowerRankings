@@ -15,7 +15,7 @@ export default function TeamModule({ pos, currentListIndex, teamInfo }: TeamInfo
     return (
         <div>
             <div
-                className="flex flex-col text-center w-326 h-36 items-center justify-center p-2 rounded-xl bg-gray-200 m-2 text-xl font-semibold"
+                className="flex flex-col text-center w-64 h-36 items-center justify-center p-2 rounded-xl bg-gray-200 m-2 text-xl font-semibold"
                 style={currentListIndex !== pos ? {
                     background: `linear-gradient(to bottom, ${teamInfo.bg}, white)`,
                     border: `4px solid ${teamInfo.bg}`

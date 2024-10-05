@@ -1,58 +1,66 @@
+/* eslint-disable @next/next/no-img-element */
 import { useState, useEffect } from "react";
 import TeamModule from "./TeamModule";
+import TeamModulePlaceholder from "./TeamModulePlaceholder";
 
 type FullTeamListProps = {
-    teamList: object[];
+    teamList: { id: string; name: string }[];  // Ensure your team objects have unique ids
     league: string;
+    teamCount: number;
 }
 
-const button_styles = "p-4 rounded-xl text-2xl transition duration-200 ease-in hover:scale-105 mx-2 w-48";
-const button_disabled = "text-gray-500 cursor-not-allowed";
+const button_styles = "p-2 rounded-xl text-xl transition duration-200 ease-in hover:scale-105 mx-2 w-48";
 
-export default function FullTeamList({ teamList = [], league }: FullTeamListProps) {
-    const [nextTeamUp, setNextTeamUp] = useState<object>({});
-    const [randomizedTeamList, setRandomizedTeamList] = useState<object[]>([]);
-    const [rankedList, setRankedList] = useState<object[]>([nextTeamUp]);
+export default function FullTeamList({ teamList, league, teamCount }: FullTeamListProps) {
+    const [randomizedList, setRandomizedList] = useState<object[]>([]);
+    const [rankedList, setRankedList] = useState<object[]>([]);
     const [currentListIndex, setCurrentListIndex] = useState<number>(0);
-    const [listCount, setListCount] = useState<number>(2);
-    const [leftButtonDisabled, setLeftButtonDisabled] = useState<boolean>(false);
-    const [rightButtonDisabled, setRightButtonDisabled] = useState<boolean>(false);
-    const [undoButtonDisabled, setUndoButtonDisabled] = useState<boolean>(false);
-    const [snapshots, setSnapshots] = useState<object[][]>([]);
+    const [listCount, setListCount] = useState<number>(1);
+    const [snapshots, setSnapshots] = useState<object[]>([]);
 
-    const moveTeamback = () => {
-        if (currentListIndex !== 0 && listCount < 34) {
+    const league_logo = `images/${league}_logo.png`;
+
+    const beginRank = () => {
+        setRankedList(prev => [...prev, randomizedList[0]]);
+    };
+
+    const moveTeamBack = () => {
+        if (currentListIndex > 0) {
             const newRankedList = [...rankedList];
             [newRankedList[currentListIndex], newRankedList[currentListIndex - 1]] = [newRankedList[currentListIndex - 1], newRankedList[currentListIndex]];
-
             setRankedList(newRankedList);
             setCurrentListIndex(prev => prev - 1);
         }
-    }
+    };
 
     const moveTeamForward = () => {
-        if (currentListIndex !== rankedList.length - 1 && listCount < 34) {
+        if (currentListIndex < rankedList.length - 1) {
             const newRankedList = [...rankedList];
             [newRankedList[currentListIndex], newRankedList[currentListIndex + 1]] = [newRankedList[currentListIndex + 1], newRankedList[currentListIndex]];
-
             setRankedList(newRankedList);
             setCurrentListIndex(prev => prev + 1);
         }
-    }
+    };
 
     const insertTeam = () => {
-        if (listCount < 34) {
+        if (listCount < teamCount) {
+            const newRankedList = [randomizedList[listCount], ...rankedList];
+            setRankedList(newRankedList);
             setListCount(prev => prev + 1);
-            if (listCount < 33) {
-                setNextTeamUp(randomizedTeamList[listCount]);
-                const newRankedList = [nextTeamUp, ...rankedList];
-                setRankedList(newRankedList);
-                setSnapshots(prev => [...prev, rankedList]);
-                console.log(snapshots);
-            }
+            setSnapshots(prev => [...prev, newRankedList]);
+        }
+        setCurrentListIndex(0);
+    };
+
+    const undoInsertion = () => {
+        if (snapshots.length > 0) {
+            const lastSnapshot = snapshots[snapshots.length - 2];
+            setSnapshots(prev => prev.slice(0, prev.length - 1));
+            setRankedList(lastSnapshot);
+            setListCount(prev => prev - 1);
             setCurrentListIndex(0);
         }
-    }
+    };
 
     useEffect(() => {
         function randomizeList(list: object[]) {
@@ -62,73 +70,142 @@ export default function FullTeamList({ teamList = [], league }: FullTeamListProp
             }
             return list;
         }
-        setRandomizedTeamList(randomizeList([...teamList]));
+        const randomList = randomizeList([...teamList]);
+        setRandomizedList(randomList);
     }, [teamList]);
-
-    useEffect(() => {
-        if (randomizedTeamList.length > 0) {
-            setRankedList([randomizedTeamList[0]]); // Initialize rankedList with the first team
-            setNextTeamUp(randomizedTeamList[1]); // Set the next team up to be inserted
-        }
-    }, [randomizedTeamList]);
-
-    useEffect(() => {
-        setLeftButtonDisabled(currentListIndex === 0 || listCount === 34);
-        setRightButtonDisabled(currentListIndex === rankedList.length - 1 || listCount === 34);
-        setUndoButtonDisabled(rankedList.length <= 1 || listCount === 34); // Enable undo button if there's more than one team
-    }, [currentListIndex, rankedList.length, listCount]);
 
     return (
         <div>
-            <h1>{league}</h1>
-            <div className="flex flex-row justify-center grid grid-cols-8">
-                {rankedList.map((team, index) => {
-                    return (
-                        <TeamModule
-                            key={index}
-                            pos={index}
-                            currentListIndex={currentListIndex}
-                            teamInfo={team}
-                        />
-                    );
-                })}
+            <div className="flex flex-row m-auto justify-center items-center mb-8 text-2xl mt-2">
+                <img src={league_logo} alt="nfl team logo" width={80} />
+                <h1>{league} Power Rankings Generator</h1>
+                <img src={league_logo} alt="nfl team logo" width={80} />
             </div>
+            <div className="flex m-auto justify-center items-center">
+                {/* Left modules */}
+                <div className="left-module flex flex-row">
+                    {Array.from({ length: 2 }, (_, i) => {
+                        const teamIndex = currentListIndex - 2 + i;
+                        console.log("teamindex", teamIndex, "currentindex", currentListIndex)
+                        if (teamIndex < 0) {
+                            return (
+                                <div
+                                    className={
+                                        currentListIndex - teamIndex === 2 ? 'opacity-40' :
+                                            currentListIndex - teamIndex === 1 ? 'opacity-80' : 'opacity-100'
+                                    }
+                                    key={i}>
+                                    <TeamModulePlaceholder leagueLogo={league_logo} />
+                                </div>
+                            );
+                        } else {
+                            return (
+                                <div
+                                    className={
+                                        currentListIndex - teamIndex === 2 ? 'opacity-40' :
+                                            currentListIndex - teamIndex === 1 ? 'opacity-80' : 'opacity-100'
+                                    }
+                                    key={rankedList[teamIndex]?.id}>
+                                    <TeamModule
+                                        pos={teamIndex}
+                                        currentListIndex={currentListIndex}
+                                        teamInfo={rankedList[teamIndex]}
+                                    />
+                                </div>
+                            );
+                        }
+                    })}
+                </div>
+
+                {/* Center module */}
+                <div className="center-module">
+                    {rankedList.length > 0 ? (
+                        <TeamModule
+                            key={rankedList[currentListIndex]?.id}  // Ensure unique key
+                            pos={currentListIndex}
+                            currentListIndex={currentListIndex}
+                            teamInfo={rankedList[currentListIndex]}
+                        />
+                    ) : (
+                        <TeamModulePlaceholder leagueLogo={league_logo} />
+                    )}
+                </div>
+
+                {/* Right modules */}
+                <div className="right-module flex flex-row">
+                    {Array.from({ length: 2 }, (_, i) => {
+                        const teamIndex = currentListIndex + 1 + i;
+                        if (teamIndex >= rankedList.length) {
+                            return (
+                                <div
+                                    className={
+                                        currentListIndex - teamIndex === -2 ? 'opacity-40' :
+                                            currentListIndex - teamIndex === -1 ? 'opacity-80' : 'opacity-100'
+                                    }
+                                    key={i}>
+                                    <TeamModulePlaceholder leagueLogo={league_logo} />
+                                </div>
+                            );
+                        } else {
+                            return (
+                                <div
+                                    className={
+                                        currentListIndex - teamIndex === -2 ? 'opacity-40' :
+                                            currentListIndex - teamIndex === -1 ? 'opacity-80' : 'opacity-100'
+                                    }
+                                    key={rankedList[teamIndex]?.id}>
+                                    <TeamModule
+                                        pos={teamIndex}
+                                        currentListIndex={currentListIndex}
+                                        teamInfo={rankedList[teamIndex]}
+                                    />
+                                </div>
+                            );
+                        }
+                    })}
+                </div>
+            </div>
+
             <div className="flex flex-row justify-center mt-8">
                 <button
-                    className={`${button_styles} bg-gray-200 ${leftButtonDisabled ? button_disabled : ''}`}
-                    style={{ color: leftButtonDisabled || listCount === 34 ? '#aaaaaa' : 'black' }}
-                    onClick={moveTeamback}
-                    disabled={leftButtonDisabled} // Disable the button based on state
+                    className={`${button_styles} bg-gray-200 ${currentListIndex === 0 && 'bg-gray-100 text-gray-400'}`}
+                    onClick={moveTeamBack}
+                    disabled={rankedList.length === 0 || currentListIndex === 0}
                 >
                     Move Before
                 </button>
                 <button
-                    className={`${button_styles} ${listCount === 2 ? 'bg-green-500' : listCount === 34 ? 'bg-sky-200' : 'bg-sky-500'} ${listCount === 34 ? button_disabled : ''}`}
-                    style={{ color: listCount === 34 ? '#aaaaaa' : 'black' }} // Conditional styling for text color
+                    className={`${button_styles} ${rankedList.length === 0 ? `bg-cyan-200 text-gray-400` : `bg-cyan-500`}`}
                     onClick={insertTeam}
-                    disabled={listCount === 34} // Disable the button based on listCount
+                    disabled={rankedList.length === 0}
                 >
-                    {listCount === 2 ? 'Begin' : listCount === 33 ? 'Finish' : 'Insert'}
+                    Insert
                 </button>
                 <button
-                    className={`${button_styles} bg-gray-200 ${rightButtonDisabled ? button_disabled : ''}`}
-                    style={{ color: rightButtonDisabled || listCount === 34 ? '#aaaaaa' : 'black' }} // Conditional styling for text color
+                    className={`${button_styles} bg-gray-200 ${currentListIndex === rankedList.length - 1 ? 'bg-gray-100 text-gray-400' : rankedList.length === teamCount && 'bg-gray-100 text-gray-400'}`}
                     onClick={moveTeamForward}
-                    disabled={rightButtonDisabled} // Disable the button based on state
+                    disabled={rankedList.length === 0 || currentListIndex === rankedList.length - 1 || rankedList.length === teamCount}
                 >
                     Move After
                 </button>
             </div>
+
             <div className="flex flex-row justify-center mt-8">
                 <button
-                    className={`${button_styles} ${undoButtonDisabled ? 'bg-red-200' : 'bg-red-500'}`}
-                    style={{ color: rightButtonDisabled || listCount === 34 ? '#aaaaaa' : 'black' }}
-                    onClick={moveTeamback}
-                    disabled={undoButtonDisabled} // Disable the button based on the undo state
+                    className={`${button_styles} ${snapshots.length < 2 ? 'bg-red-100 text-gray-400' : `bg-red-500`}`}
+                    onClick={undoInsertion}
+                    disabled={rankedList.length === 0 || snapshots.length < 2}
                 >
                     Undo
                 </button>
+                <button
+                    className={`${button_styles} ${rankedList.length > 0 ? `bg-green-200 text-gray-400` : `bg-green-500 text-black`}`}
+                    onClick={beginRank}
+                    disabled={rankedList.length > 0}
+                >
+                    Begin
+                </button>
             </div>
-        </div>
+        </div>       
     );
 }
