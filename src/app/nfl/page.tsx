@@ -14,7 +14,9 @@ export default function NFLList() {
 
     return (
         <div className="flex flex-col min-h-screen">
-            <FullTeamList teamList={teams} league={'NFL'} teamCount={32}/>
+            <div className='flex-grow mt-16'> 
+                <FullTeamList teamList={teams} league={'NFL'} teamCount={32} />
+            </div>
             <Footer />
         </div>
     )

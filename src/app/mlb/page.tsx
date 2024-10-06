@@ -14,7 +14,9 @@ export default function MLBList() {
 
     return (
         <div className="flex flex-col min-h-screen">
-            <FullTeamList teamList={teams} league={'MLB'} />
+            <div className='flex-grow mt-16'>
+                <FullTeamList teamList={teams} league={'MLB'} teamCount={30} />
+            </div>
             <Footer />
         </div>
     )

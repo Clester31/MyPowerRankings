@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import TeamModule from "./TeamModule";
 import TeamModulePlaceholder from "./TeamModulePlaceholder";
+import { useAppContext } from "../context/Context";
+import { useRouter } from 'next/navigation';
 
 type FullTeamListProps = {
     teamList: { id: string; name: string }[];  // Ensure your team objects have unique ids
@@ -9,7 +11,7 @@ type FullTeamListProps = {
     teamCount: number;
 }
 
-const button_styles = "p-2 rounded-xl text-xl transition duration-200 ease-in hover:scale-105 mx-2 w-48";
+const button_styles = "p-2 rounded-md text-md transition duration-200 ease-in hover:scale-105 mx-2 w-48 shadow-lg";
 
 export default function FullTeamList({ teamList, league, teamCount }: FullTeamListProps) {
     const [randomizedList, setRandomizedList] = useState<object[]>([]);
@@ -17,6 +19,9 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
     const [currentListIndex, setCurrentListIndex] = useState<number>(0);
     const [listCount, setListCount] = useState<number>(1);
     const [snapshots, setSnapshots] = useState<object[]>([]);
+
+    const { setFinalTeamList, setLeagueString } = useAppContext();
+    const router = useRouter();
 
     const league_logo = `images/${league}_logo.png`;
 
@@ -49,6 +54,7 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
             setListCount(prev => prev + 1);
             setSnapshots(prev => [...prev, newRankedList]);
         }
+        console.log("listcount", listCount);
         setCurrentListIndex(0);
     };
 
@@ -61,6 +67,13 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
             setCurrentListIndex(0);
         }
     };
+
+    const finishList = () => {
+        console.log(rankedList);
+        setFinalTeamList(rankedList);
+        setLeagueString(league);
+        router.push('/results');
+    }
 
     useEffect(() => {
         function randomizeList(list: object[]) {
@@ -86,7 +99,6 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
                 <div className="left-module flex flex-row">
                     {Array.from({ length: 2 }, (_, i) => {
                         const teamIndex = currentListIndex - 2 + i;
-                        console.log("teamindex", teamIndex, "currentindex", currentListIndex)
                         if (teamIndex < 0) {
                             return (
                                 <div
@@ -168,29 +180,36 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
 
             <div className="flex flex-row justify-center mt-8">
                 <button
-                    className={`${button_styles} bg-gray-200 ${currentListIndex === 0 && 'bg-gray-100 text-gray-400'}`}
+                    className={`${button_styles} bg-gray-200 ${currentListIndex === 0 || listCount > teamCount ? 'bg-gray-100 text-gray-400' : ''}`}
                     onClick={moveTeamBack}
-                    disabled={rankedList.length === 0 || currentListIndex === 0}
+                    disabled={rankedList.length === 0 || currentListIndex === 0 || listCount > teamCount}
                 >
                     Move Before
                 </button>
                 <button
-                    className={`${button_styles} ${rankedList.length === 0 ? `bg-cyan-200 text-gray-400` : `bg-cyan-500`}`}
+                    className={`${button_styles} ${rankedList.length === 0 || rankedList.length === teamCount ? `bg-cyan-200 text-gray-400` : `bg-cyan-500`}`}
                     onClick={insertTeam}
-                    disabled={rankedList.length === 0}
+                    disabled={rankedList.length === 0 || rankedList.length === teamCount}
                 >
                     Insert
                 </button>
                 <button
-                    className={`${button_styles} bg-gray-200 ${currentListIndex === rankedList.length - 1 ? 'bg-gray-100 text-gray-400' : rankedList.length === teamCount && 'bg-gray-100 text-gray-400'}`}
+                    className={`${button_styles} bg-gray-200 ${rankedList.length === 0 || currentListIndex === rankedList.length - 1 || listCount > teamCount ? 'bg-gray-100 text-gray-400' : ''}`}
                     onClick={moveTeamForward}
-                    disabled={rankedList.length === 0 || currentListIndex === rankedList.length - 1 || rankedList.length === teamCount}
+                    disabled={rankedList.length === 0 || currentListIndex === rankedList.length - 1 || listCount > teamCount}
                 >
                     Move After
                 </button>
             </div>
 
             <div className="flex flex-row justify-center mt-8">
+                <button
+                    className={`${button_styles} ${rankedList.length > 0 ? `bg-green-200 text-gray-400` : `bg-green-500 text-black`}`}
+                    onClick={beginRank}
+                    disabled={rankedList.length > 0}
+                >
+                    Begin
+                </button>
                 <button
                     className={`${button_styles} ${snapshots.length < 2 ? 'bg-red-100 text-gray-400' : `bg-red-500`}`}
                     onClick={undoInsertion}
@@ -199,13 +218,14 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
                     Undo
                 </button>
                 <button
-                    className={`${button_styles} ${rankedList.length > 0 ? `bg-green-200 text-gray-400` : `bg-green-500 text-black`}`}
-                    onClick={beginRank}
-                    disabled={rankedList.length > 0}
+                    className={`${button_styles} ${rankedList.length !== teamCount ? 'bg-amber-100 text-gray-400' : `bg-amber-500`}`}
+                    onClick={finishList}
+                    disabled={rankedList.length !== teamCount}
                 >
-                    Begin
+                    Finish
                 </button>
             </div>
-        </div>       
+
+        </div>
     );
 }
