@@ -1,36 +1,17 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MyPowerRankings - American Sports Power Rankings Generator
 
-## Getting Started
+MyPowerRankings is a website that allows users to create and share their own custom power rankings for multiple American sports leagues. Currently, there is support for NFL, NBA, NHL, and MLB power rankings genreation with future plans for additional American and potentially non-American leagues.
 
-First, run the development server:
+## Usage
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+User's have the option to choose between the currently available sports leagues to make power rankings for. After selecting a league, users can start their rankings by hitting the 'Begin' button. After beginning, the 'Insert' button is used to place a team at the current index of the list. After the first team has been set, users can move the next teams on the list my using the 'Move Before' and 'Move After' buttons. Additionally, users can undo a placement by clicking the 'Undo' button, which will set the list back to a previous iteration of the list. Once the user has placed all of their teams in the list, they can hit the 'Finish' button to move to the results page.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The results page will display the user's rankings on an image that can be downloaded as a .png file.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Technology/tools used
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* React
+* Typescript
+* Tailwind CSS
+* Next.js
+* html2Canvas
