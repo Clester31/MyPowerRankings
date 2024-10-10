@@ -5,8 +5,17 @@ import TeamModulePlaceholder from "./TeamModulePlaceholder";
 import { useAppContext } from "../context/Context";
 import { useRouter } from 'next/navigation';
 
+type Team = {
+    id: string;
+    full_name: string;
+    abrv: string;
+    img: string;
+    bg: string;
+    selected: boolean;
+};
+
 type FullTeamListProps = {
-    teamList: { id: string; name: string }[];  // Ensure your team objects have unique ids
+    teamList: Team[]; 
     league: string;
     teamCount: number;
 }
@@ -14,11 +23,11 @@ type FullTeamListProps = {
 const button_styles = "p-2 rounded-md text-md transition duration-200 ease-in hover:scale-105 mx-2 w-48 shadow-lg";
 
 export default function FullTeamList({ teamList, league, teamCount }: FullTeamListProps) {
-    const [randomizedList, setRandomizedList] = useState<object[]>([]);
-    const [rankedList, setRankedList] = useState<object[]>([]);
+    const [randomizedList, setRandomizedList] = useState<Team[]>([]);
+    const [rankedList, setRankedList] = useState<Team[]>([]);
     const [currentListIndex, setCurrentListIndex] = useState<number>(0);
     const [listCount, setListCount] = useState<number>(1);
-    const [snapshots, setSnapshots] = useState<object[]>([]);
+    const [snapshots, setSnapshots] = useState<Team[][]>([]);
 
     const { setFinalTeamList, setLeagueString } = useAppContext();
     const router = useRouter();
@@ -76,7 +85,7 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
     }
 
     useEffect(() => {
-        function randomizeList(list: object[]) {
+        function randomizeList(list: Team[]): Team[] {
             for (let i = list.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [list[i], list[j]] = [list[j], list[i]];

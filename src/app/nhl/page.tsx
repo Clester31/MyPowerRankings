@@ -5,11 +5,20 @@ import nhl_team_info from '../teaminfo/nhl_team_info'
 import FullTeamList from '../components/FullTeamList';
 import Footer from '../components/Footer';
 
+type Team = {
+    id: string;
+    full_name: string;
+    abrv: string;
+    img: string;
+    bg: string;
+    selected: boolean;
+};
+
 export default function NFLList() {
-    const [teams, setTeams] = useState<object[]>([]);
+    const [teams, setTeams] = useState<Team[]>([]);
 
     useEffect(() => {
-        setTeams(nhl_team_info);
+        setTeams(nhl_team_info as Team[]);
     }, [])
 
     return (

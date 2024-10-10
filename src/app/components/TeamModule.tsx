@@ -1,15 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
+type Team = {
+    full_name: string;
+    abrv: string;
+    img: string;
+    bg: string;
+    selected: boolean;
+};
+
 type TeamInfoProps = {
     pos: number;
     currentListIndex: number;
-    teamInfo: {
-        full_name: string;
-        abrv: string;
-        img: string;
-        bg: string;
-        selected: boolean;
-    }
-}
+    teamInfo: Team; 
+};
 
 export default function TeamModule({ pos, currentListIndex, teamInfo }: TeamInfoProps) {
     return (

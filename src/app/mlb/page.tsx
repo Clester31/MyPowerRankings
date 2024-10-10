@@ -5,11 +5,20 @@ import mlb_team_info from '../teaminfo/mlb_team_info'
 import FullTeamList from '../components/FullTeamList';
 import Footer from '../components/Footer';
 
+type Team = {
+    id: string;
+    full_name: string;
+    abrv: string;
+    img: string;
+    bg: string;
+    selected: boolean;
+};
+
 export default function MLBList() {
-    const [teams, setTeams] = useState<object[]>([]);
+    const [teams, setTeams] = useState<Team[]>([]);
 
     useEffect(() => {
-        setTeams(mlb_team_info);
+        setTeams(mlb_team_info as Team[]);
     }, [])
 
     return (

@@ -2,9 +2,18 @@
 
 import { createContext, useContext, useState } from "react";
 
+type Team = {
+    id: string;
+    full_name: string;
+    abrv: string;
+    img: string;
+    bg: string;
+    selected: boolean;
+};
+
 interface ContextType {
-    finalTeamList: object[];
-    setFinalTeamList: React.Dispatch<React.SetStateAction<object[]>>;
+    finalTeamList: Team[];
+    setFinalTeamList: React.Dispatch<React.SetStateAction<Team[]>>;
     leagueString: string;
     setLeagueString: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -12,7 +21,7 @@ interface ContextType {
 const appContext = createContext<ContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
-    const [finalTeamList, setFinalTeamList] = useState<object[]>([]);
+    const [finalTeamList, setFinalTeamList] = useState<Team[]>([]);
     const [leagueString, setLeagueString] = useState<string>("");
 
     return (
@@ -27,7 +36,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
-// Custom hook to access the context
 export const useAppContext = () => {
     const context = useContext(appContext);
     if (!context) {

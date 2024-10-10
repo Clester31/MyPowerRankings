@@ -1,7 +1,9 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import { useAppContext } from "../context/Context"
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
 import getDateString from "../getDateString";
 import Footer from "../components/Footer";
@@ -9,9 +11,18 @@ import { useRouter } from "next/navigation";
 
 const button_styles = "p-2 rounded-md text-md transition duration-200 ease-in hover:scale-105 mx-2 w-48 shadow-lg";
 
+type Team = {
+    id: string;
+    full_name: string;
+    abrv: string;
+    img: string;
+    bg: string;
+    selected: boolean;
+};
+
 export default function ResultsPage() {
     const [name, setName] = useState<string>("");
-    const { finalTeamList, leagueString } = useAppContext();
+    const { finalTeamList, leagueString }: { finalTeamList: Team[], leagueString: string } = useAppContext();
     const imageRef = useRef<HTMLDivElement | null>(null);
 
     const router = useRouter();
@@ -82,5 +93,4 @@ export default function ResultsPage() {
             <Footer />
         </div>
     );
-
 }

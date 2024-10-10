@@ -5,11 +5,20 @@ import Footer from "../components/Footer";
 import FullTeamList from "../components/FullTeamList";
 import nba_team_info from "../teaminfo/nba_team_info";
 
+type Team = {
+    id: string;
+    full_name: string;
+    abrv: string;
+    img: string;
+    bg: string;
+    selected: boolean;
+};
+
 export default function NBAList() {
-    const [teams, setTeams] = useState<object[]>([]);
+    const [teams, setTeams] = useState<Team[]>([]);
 
     useEffect(() => {
-        setTeams(nba_team_info);
+        setTeams(nba_team_info as Team[]);
     }, [])
 
     return (
