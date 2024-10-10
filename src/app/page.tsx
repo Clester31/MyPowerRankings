@@ -1,7 +1,5 @@
 "use client"
 
-import { useState } from "react"
-import Sidebar from "./components/Topbar"
 import PageIcon from "./components/PageIcon";
 import Footer from "./components/Footer";
 import Link from "next/link";
