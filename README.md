@@ -15,3 +15,8 @@ The results page will display the user's rankings on an image that can be downlo
 * Tailwind CSS
 * Next.js
 * html2Canvas
+
+# TODO
+
+* Deleting lists from database
+* Adding error ahdnling for invalid login credentials
