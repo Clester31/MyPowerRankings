@@ -3,11 +3,13 @@
 "use client"
 
 import { useAppContext } from "../context/Context"
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import html2canvas from 'html2canvas';
 import getDateString from "../getDateString";
 import Footer from "../components/Footer";
 import { useRouter } from "next/navigation";
+import { addUserList, auth } from '../firebase'
+import { AddNewListDisplay } from "../components/AddNewListDisplay";
 
 const button_styles = "p-2 rounded-md text-md transition duration-200 ease-in hover:scale-105 mx-2 w-48 shadow-lg";
 
@@ -22,10 +24,19 @@ type Team = {
 
 export default function ResultsPage() {
     const [name, setName] = useState<string>("");
-    const { finalTeamList, leagueString }: { finalTeamList: Team[], leagueString: string } = useAppContext();
+    const [user, setUser] = useState<User | null>(null);
+    const [newListDisplay, setNewListDisplay] = useState<boolean>(false);
+    const { finalTeamList, setLocalLists }: { finalTeamList: Team[], setLocalLists: React.Dispatch<React.SetStateAction<Team[][]>> } = useAppContext();
     const imageRef = useRef<HTMLDivElement | null>(null);
-
     const router = useRouter();
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            setUser(user);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const generateImage = () => {
         if (imageRef.current) {
@@ -38,8 +49,22 @@ export default function ResultsPage() {
         }
     }
 
+    const addNewList = (newListItem: Team[], listName: string) => {
+        setLocalLists(prev => [...prev, newListItem])
+        addUserList(newListItem, listName);
+        setNewListDisplay(false);
+        router.push('/');
+    }
+
     return (
         <div className="flex flex-col min-h-screen">
+            {newListDisplay &&
+                <AddNewListDisplay 
+                    teamList={finalTeamList}
+                    addNewList={addNewList}
+                    setNewListDisplay={setNewListDisplay}
+                />
+            }
             <div className="flex flex-col flex-grow items-center">
                 <div className="mt-16 flex flex-row justify-center items-center">
                     <div
@@ -68,7 +93,7 @@ export default function ResultsPage() {
                         </div>
                     </div>
                 </div>
-                <div className="mt-8">
+                <div className="m-8">
                     <input
                         type="text"
                         className={`${button_styles} bg-gray-100 border-2 border-black`}
@@ -82,12 +107,15 @@ export default function ResultsPage() {
                     >
                         Download Image
                     </button>
-                    <button
-                        className={`${button_styles} bg-green-500 text-white justify-center items-center`}
-                        onClick={() => router.push(`/${leagueString.toLowerCase()}`)}
-                    >
-                        Make New List
-                    </button>
+                    {user &&
+                        <button
+                            className={`${button_styles} bg-green-500 text-white justify-center items-center`}
+                            onClick={() => setNewListDisplay(true)}
+                        >
+                            Save List
+                        </button>
+                    }
+
                 </div>
             </div>
             <Footer />

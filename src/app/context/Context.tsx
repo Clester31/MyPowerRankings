@@ -16,6 +16,13 @@ interface ContextType {
     setFinalTeamList: React.Dispatch<React.SetStateAction<Team[]>>;
     leagueString: string;
     setLeagueString: React.Dispatch<React.SetStateAction<string>>;
+    localLists: ListType[]; 
+    setLocalLists: React.Dispatch<React.SetStateAction<ListType[]>>; 
+}
+
+interface ListType {
+    name: string;
+    teams: Team[];
 }
 
 const appContext = createContext<ContextType | undefined>(undefined);
@@ -23,13 +30,16 @@ const appContext = createContext<ContextType | undefined>(undefined);
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const [finalTeamList, setFinalTeamList] = useState<Team[]>([]);
     const [leagueString, setLeagueString] = useState<string>("");
+    const [localLists, setLocalLists] = useState<ListType[]>([]);
 
     return (
         <appContext.Provider value={{
             finalTeamList,
             setFinalTeamList,
             leagueString,
-            setLeagueString
+            setLeagueString,
+            localLists,
+            setLocalLists,
         }}>
             {children}
         </appContext.Provider>

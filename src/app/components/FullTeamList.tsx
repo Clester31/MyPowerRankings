@@ -32,8 +32,6 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
     const { setFinalTeamList, setLeagueString } = useAppContext();
     const router = useRouter();
 
-    const league_logo = `images/${league}_logo.png`;
-
     const beginRank = () => {
         setRankedList(prev => [...prev, randomizedList[0]]);
     };
@@ -99,9 +97,7 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
     return (
         <div>
             <div className="flex flex-row m-auto justify-center items-center mb-8 text-2xl mt-2">
-                <img src={league_logo} alt="nfl team logo" width={80} />
                 <h1>{league} Power Rankings Generator</h1>
-                <img src={league_logo} alt="nfl team logo" width={80} />
             </div>
             <div className="flex m-auto justify-center items-center">
                 {/* Left modules */}
@@ -116,7 +112,7 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
                                             currentListIndex - teamIndex === 1 ? 'opacity-80' : 'opacity-100'
                                     }
                                     key={i}>
-                                    <TeamModulePlaceholder leagueLogo={league_logo} />
+                                    <TeamModulePlaceholder />
                                 </div>
                             );
                         } else {
@@ -148,7 +144,7 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
                             teamInfo={rankedList[currentListIndex]}
                         />
                     ) : (
-                        <TeamModulePlaceholder leagueLogo={league_logo} />
+                        <TeamModulePlaceholder />
                     )}
                 </div>
 
@@ -164,7 +160,7 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
                                             currentListIndex - teamIndex === -1 ? 'opacity-80' : 'opacity-100'
                                     }
                                     key={i}>
-                                    <TeamModulePlaceholder leagueLogo={league_logo} />
+                                    <TeamModulePlaceholder />
                                 </div>
                             );
                         } else {
