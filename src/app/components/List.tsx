@@ -1,5 +1,8 @@
 import { useAppContext } from "../context/Context";
 import { useRouter } from "next/navigation";
+import { deleteUserList } from "../firebase";
+import { useState } from "react";
+import DeleteItemDisplay from "./DeleteItemDisplay";
 
 /* eslint-disable @next/next/no-img-element */
 type Team = {
@@ -12,13 +15,16 @@ type Team = {
 };
 
 interface ListType {
+    id: string;
     name: string;
     list: Team[];
     listIndex: number;
     setLocalLists: React.Dispatch<React.SetStateAction<{ name: string; teams: Team[] }[]>>;
 }
 
-export default function List({ name, list, listIndex, setLocalLists }: ListType) {
+export default function List({ id, name, list, listIndex, setLocalLists }: ListType) {
+    const [showDeleteDisplay, setShowDeleteDisplay] = useState<boolean>(false);
+    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
     const { setFinalTeamList } = useAppContext();
     const router = useRouter();
 
@@ -27,15 +33,28 @@ export default function List({ name, list, listIndex, setLocalLists }: ListType)
         router.push('/results');
     }
 
+    const handleDelete = () => {
+        setShowDeleteDisplay(true);
+        setItemToDelete(id);
+    }
+
     return (
-        <div
-            key={listIndex}
-            className="my-4 mx-2">
+        <div key={listIndex} className="my-4 mx-2">
+            {showDeleteDisplay && (
+                <DeleteItemDisplay
+                    onConfirm={() => {
+                        deleteUserList(itemToDelete!);
+                        setLocalLists(prev => [...prev.slice(0, listIndex), ...prev.slice(listIndex + 1)]);
+                        setShowDeleteDisplay(false); // Hide the delete display after confirming
+                    }}
+                    onCancel={() => setShowDeleteDisplay(false)} // Hide the delete display on cancel
+                />
+            )}
             <div className="flex flex-row mb-1">
                 <h2 className="text-xl mx-4">{name}</h2>
                 <button
                     className="bg-red-500 text-white px ml-2 rounded"
-                    onClick={() => setLocalLists(prev => [...prev.slice(0, listIndex), ...prev.slice(listIndex + 1)])}
+                    onClick={handleDelete}
                 >
                     <i className="fa-solid fa-trash px-2 hover:text-white cursor-pointer transition duration-100 hover:ease-in"></i>
                 </button>
@@ -63,7 +82,7 @@ export default function List({ name, list, listIndex, setLocalLists }: ListType)
                         </div>
                     ))
                 ) : (
-                    <p>No teams available in this list.</p> 
+                    <p>No teams available in this list.</p>
                 )}
             </div>
         </div>

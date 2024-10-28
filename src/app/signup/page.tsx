@@ -5,6 +5,9 @@ import Footer from "../components/Footer";
 import Link from "next/link";
 import { createAccountWithEmail, signInWithGoogle } from "../firebase";
 
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
+
 const button_styles = "my-4 p-2 rounded-md text-md transition duration-200 ease-in hover:scale-105 mx-2 w-48 shadow-lg";
 const input_styles = "p-2 rounded-md mt-4 border-2 border-gray-300";
 
@@ -16,6 +19,7 @@ export default function Signup() {
     const handleSignUp = () => {
         if (password !== confirmPassword) {
             console.error("Passwords do not match");
+            toast.error("Passwords do not match");
             return;
         }
         createAccountWithEmail(email, password);
@@ -24,6 +28,7 @@ export default function Signup() {
     const handleGoogleSignUp = () => {
         if (password !== confirmPassword) {
             console.error("Passwords do not match");
+            toast.error("Passwords do not match");
             return;
         }
         signInWithGoogle();
@@ -71,6 +76,7 @@ export default function Signup() {
                         </h4>
                     </div>
                 </div>
+                <ToastContainer />
             </div>
             <Footer />
         </div>

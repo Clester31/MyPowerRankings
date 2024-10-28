@@ -5,7 +5,7 @@ import Footer from "./components/Footer";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { User } from "firebase/auth";
-import { auth, signIn, logOut } from "./firebase";
+import { auth, logOut } from "./firebase";
 
 const button_styles = "p-2 rounded-md text-md transition duration-200 ease-in hover:scale-105 mx-2 w-48 shadow-lg";
 
@@ -47,7 +47,7 @@ export default function Home() {
             <Link href={'/nhl'}><PageIcon logo={nhl_logo} text="NHL" /></Link>
             <Link href={'/mlb'}><PageIcon logo={mlb_logo} text="MLB" /></Link>
           </div>
-          <div className="mt-8">
+          {/* <div className="mt-8">
             {user ? (
               <>
                 <Link href={'/lists'}>
@@ -65,7 +65,7 @@ export default function Home() {
                 <button className={`${button_styles} bg-green-500 text-white text-xl`}>Sign In</button>
               </Link>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
       <Footer />

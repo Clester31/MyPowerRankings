@@ -1,15 +1,15 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signOut,
   GoogleAuthProvider,
   signInWithPopup,
   UserCredential
 } from "firebase/auth";
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs } from "firebase/firestore";
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
 
 // Your web app's Firebase configuration
@@ -104,13 +104,27 @@ export const addUserList = async (listData, listName: string) => {
     const listObject = {
       listId: uuidv4(),
       listName: listName,
-      teams: listData, 
+      teams: listData,
       createdAt: new Date(),
     };
 
     await setDoc(listRef, listObject)
-  } catch(error) {
+  } catch (error) {
     console.error("error adding list", error);
+    throw error;
+  }
+}
+
+export const deleteUserList = async (listId: string) => {
+  const user = auth.currentUser;
+  if (!user) throw new Error("User not signed in");
+
+  try {
+    const listRef = doc(db, "users", user.uid, "lists", listId);
+    if (!listRef) throw new Error("List not found");
+    await deleteDoc(listRef);
+  } catch (error) {
+    console.error("error deleting list", error);
     throw error;
   }
 }
@@ -119,13 +133,13 @@ export const fetchUserLists = async (userId: string) => {
   try {
     const listRef = collection(db, "users", userId, "lists");
     const listSnapshot = await getDocs(listRef);
-    const listData = listSnapshot.docs.map(doc => ({ 
+    const listData = listSnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }))
     console.log("getting list data...", listData);
     return listData;
-  } catch(error) {
+  } catch (error) {
     console.error("error fetching list", error);
     throw error;
   }

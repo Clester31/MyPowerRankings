@@ -18,5 +18,5 @@ The results page will display the user's rankings on an image that can be downlo
 
 # TODO
 
-* Deleting lists from database
-* Adding error ahdnling for invalid login credentials
+* ~~Deleting lists from database~~
+* ~~Adding error ahdnling for invalid login credentials~~

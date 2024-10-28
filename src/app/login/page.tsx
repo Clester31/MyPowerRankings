@@ -6,6 +6,9 @@ import Link from "next/link";
 import { signInWithEmail, signInWithGoogle } from "../firebase";
 import { useRouter } from "next/navigation";
 
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
+
 const button_styles = "my-4 p-2 rounded-md text-md transition duration-200 ease-in hover:scale-105 mx-2 w-48 shadow-lg";
 const input_styles = "p-2 rounded-md mt-4 border-2 border-gray-300";
 
@@ -15,14 +18,24 @@ export default function Login() {
 
     const router = useRouter();
 
-    const handleSignIn = () => {
-        signInWithEmail(email, password);
-        router.push('/');
+    const handleSignIn = async () => {
+        try {
+            await signInWithEmail(email, password);
+            router.push('/');
+        } catch (error) {
+            toast.error("Invalid email or password. Please try again.");
+            console.error("error with email sign in", error);
+        }
     }
 
-    const handleGoogleSignIn = () => {
-        signInWithGoogle();
-        router.push('/');
+    const handleGoogleSignIn = async () => {
+        try {
+            await signInWithGoogle();
+            router.push('/');
+        } catch (error) {
+            toast.error("Error signing in with Google. Please try again.");
+            console.error("error with google sign in", error);
+        }
     }
 
     return (
@@ -61,6 +74,7 @@ export default function Login() {
                         </h4>
                     </div>
                 </div>
+                <ToastContainer />
             </div>
             <Footer />
         </div>

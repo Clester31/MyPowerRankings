@@ -15,12 +15,12 @@ type Team = {
 };
 
 type FullTeamListProps = {
-    teamList: Team[]; 
+    teamList: Team[];
     league: string;
     teamCount: number;
 }
 
-const button_styles = "p-2 rounded-md text-md transition duration-200 ease-in hover:scale-105 mx-2 w-48 shadow-lg";
+const button_styles = "p-2 rounded-md text-md transition duration-200 ease-in hover:scale-105 mx-2 shadow-lg";
 
 export default function FullTeamList({ teamList, league, teamCount }: FullTeamListProps) {
     const [randomizedList, setRandomizedList] = useState<Team[]>([]);
@@ -100,7 +100,6 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
                 <h1>{league} Power Rankings Generator</h1>
             </div>
             <div className="flex m-auto justify-center items-center">
-                {/* Left modules */}
                 <div className="left-module flex flex-row">
                     {Array.from({ length: 2 }, (_, i) => {
                         const teamIndex = currentListIndex - 2 + i;
@@ -147,8 +146,6 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
                         <TeamModulePlaceholder />
                     )}
                 </div>
-
-                {/* Right modules */}
                 <div className="right-module flex flex-row">
                     {Array.from({ length: 2 }, (_, i) => {
                         const teamIndex = currentListIndex + 1 + i;
@@ -183,53 +180,115 @@ export default function FullTeamList({ teamList, league, teamCount }: FullTeamLi
                 </div>
             </div>
 
-            <div className="flex flex-row justify-center mt-8">
-                <button
-                    className={`${button_styles} bg-gray-200 ${currentListIndex === 0 || listCount > teamCount ? 'bg-gray-100 text-gray-400' : ''}`}
-                    onClick={moveTeamBack}
-                    disabled={rankedList.length === 0 || currentListIndex === 0 || listCount > teamCount}
-                >
-                    Move Before
-                </button>
-                <button
-                    className={`${button_styles} ${rankedList.length === 0 || rankedList.length === teamCount ? `bg-cyan-200 text-gray-400` : `bg-cyan-500`}`}
-                    onClick={insertTeam}
-                    disabled={rankedList.length === 0 || rankedList.length === teamCount}
-                >
-                    Insert
-                </button>
-                <button
-                    className={`${button_styles} bg-gray-200 ${rankedList.length === 0 || currentListIndex === rankedList.length - 1 || listCount > teamCount ? 'bg-gray-100 text-gray-400' : ''}`}
-                    onClick={moveTeamForward}
-                    disabled={rankedList.length === 0 || currentListIndex === rankedList.length - 1 || listCount > teamCount}
-                >
-                    Move After
-                </button>
-            </div>
+            {
+                rankedList.length < 1 &&
+                <div className="flex flex-row justify-center mt-8">
+                    <button
+                        className={`${button_styles} text-white w-32 ${rankedList.length > 0 ? `bg-green-200 text-gray-400` : `bg-green-500 text-black`}`}
+                        onClick={beginRank}
+                        disabled={rankedList.length > 0}
+                    >
+                        Start
+                    </button>
+                </div>
+                ||
+                rankedList.length === teamCount &&
+                <div className="flex flex-col justify-center mt-8 items-center">
+                    <div>
+                        <button
+                            className={`${button_styles} bg-gray-300 w-16 ${currentListIndex === 0 || listCount > teamCount ? 'bg-gray-100 text-gray-400' : ''}`}
+                            onClick={moveTeamBack}
+                            disabled={rankedList.length === 0 || currentListIndex === 0 || listCount > teamCount}
+                        >
+                            <i className="fa-solid fa-arrow-left px-2 cursor-pointer transition duration-100 hover:ease-in"></i>
+                        </button>
+                        <button
+                            className={`${button_styles} text-white w-32 ${rankedList.length !== teamCount ? 'bg-amber-100 text-gray-400' : `bg-amber-500`}`}
+                            onClick={finishList}
+                            disabled={rankedList.length !== teamCount}
+                        >
+                            Finish
+                        </button>
+                        <button
+                            className={`${button_styles} bg-gray-300 w-16 ${rankedList.length === 0 || currentListIndex === rankedList.length - 1 || listCount > teamCount ? 'bg-gray-100 text-gray-400' : ''}`}
+                            onClick={moveTeamForward}
+                            disabled={rankedList.length === 0 || currentListIndex === rankedList.length - 1 || listCount > teamCount}
+                        >
+                            <i className="fa-solid fa-arrow-right px-2 cursor-pointer transition duration-100 hover:ease-in"></i>
+                        </button>
+                    </div>
+                    <div className="mt-4">
+                        <button
+                            className={`${button_styles} w-32 text-white ${snapshots.length < 2 ? 'bg-red-100 text-gray-400' : `bg-red-500`}`}
+                            onClick={undoInsertion}
+                            disabled={rankedList.length === 0 || snapshots.length < 2}
+                        >
+                            <i className="fa-solid fa-undo px-2 cursor-pointer transition duration-100 hover:ease-in"></i>
+                        </button>
+                    </div>
+                </div>
 
-            <div className="flex flex-row justify-center mt-8">
+                ||
+                <div className="flex flex-col justify-center mt-8 items-center">
+                    <div>
+                        <button
+                            className={`${button_styles} bg-gray-300 w-16 ${currentListIndex === 0 || listCount > teamCount ? 'bg-gray-100 text-gray-400' : ''}`}
+                            onClick={moveTeamBack}
+                            disabled={rankedList.length === 0 || currentListIndex === 0 || listCount > teamCount}
+                        >
+                            <i className="fa-solid fa-arrow-left px-2 cursor-pointer transition duration-100 hover:ease-in"></i>
+                        </button>
+                        <button
+                            className={`${button_styles} w-32 text-xl text-white ${rankedList.length === 0 || rankedList.length === teamCount ? `bg-blue-200 text-gray-400` : `bg-blue-500`}`}
+                            onClick={insertTeam}
+                            disabled={rankedList.length === 0 || rankedList.length === teamCount}
+                        >
+                            Insert
+                        </button>
+                        <button
+                            className={`${button_styles} bg-gray-300 w-16 ${rankedList.length === 0 || currentListIndex === rankedList.length - 1 || listCount > teamCount ? 'bg-gray-100 text-gray-400' : ''}`}
+                            onClick={moveTeamForward}
+                            disabled={rankedList.length === 0 || currentListIndex === rankedList.length - 1 || listCount > teamCount}
+                        >
+                            <i className="fa-solid fa-arrow-right px-2 cursor-pointer transition duration-100 hover:ease-in"></i>
+                        </button>
+                    </div>
+                    <div className="mt-4">
+                        <button
+                            className={`${button_styles} w-32 text-white ${snapshots.length < 2 ? 'bg-red-100 text-gray-400' : `bg-red-500`}`}
+                            onClick={undoInsertion}
+                            disabled={rankedList.length === 0 || snapshots.length < 2}
+                        >
+                            <i className="fa-solid fa-undo px-2 cursor-pointer transition duration-100 hover:ease-in"></i>
+                        </button>
+                    </div>
+
+                </div>
+            }
+
+            {/* <div className="flex flex-row justify-center mt-8">
                 <button
-                    className={`${button_styles} ${rankedList.length > 0 ? `bg-green-200 text-gray-400` : `bg-green-500 text-black`}`}
+                    className={`${button_styles} w-16 ${rankedList.length > 0 ? `bg-green-200 text-gray-400` : `bg-green-500 text-black`}`}
                     onClick={beginRank}
                     disabled={rankedList.length > 0}
                 >
-                    Begin
+                    Start
                 </button>
                 <button
-                    className={`${button_styles} ${snapshots.length < 2 ? 'bg-red-100 text-gray-400' : `bg-red-500`}`}
+                    className={`${button_styles} w-16 ${snapshots.length < 2 ? 'bg-red-100 text-gray-400' : `bg-red-500 hover:text-white`}`}
                     onClick={undoInsertion}
                     disabled={rankedList.length === 0 || snapshots.length < 2}
                 >
-                    Undo
+                    <i className="fa-solid fa-undo px-2 cursor-pointer transition duration-100 hover:ease-in"></i>
                 </button>
                 <button
-                    className={`${button_styles} ${rankedList.length !== teamCount ? 'bg-amber-100 text-gray-400' : `bg-amber-500`}`}
+                    className={`${button_styles} w-16 ${rankedList.length !== teamCount ? 'bg-amber-100 text-gray-400' : `bg-amber-500`}`}
                     onClick={finishList}
                     disabled={rankedList.length !== teamCount}
                 >
                     Finish
                 </button>
-            </div>
+            </div> */}
 
         </div>
     );
