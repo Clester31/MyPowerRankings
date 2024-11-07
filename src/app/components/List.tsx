@@ -14,15 +14,21 @@ type Team = {
     selected: boolean;
 };
 
-interface ListType {
+type ListType = {
+    id: string;
+    name: string;
+    teams: Team[];
+};
+
+interface ListProps {
     id: string;
     name: string;
     list: Team[];
     listIndex: number;
-    setLocalLists: React.Dispatch<React.SetStateAction<{ name: string; teams: Team[] }[]>>;
+    setLocalLists: React.Dispatch<React.SetStateAction<ListType[]>>;
 }
 
-export default function List({ id, name, list, listIndex, setLocalLists }: ListType) {
+export default function List({ id, name, list, listIndex, setLocalLists }: ListProps) {
     const [showDeleteDisplay, setShowDeleteDisplay] = useState<boolean>(false);
     const [itemToDelete, setItemToDelete] = useState<string | null>(null);
     const { setFinalTeamList } = useAppContext();

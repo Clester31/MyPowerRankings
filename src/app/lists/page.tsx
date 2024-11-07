@@ -7,6 +7,21 @@ import { useEffect, useState } from "react";
 import { auth, fetchUserLists } from "../firebase";
 import DeleteItemDisplay from "../components/DeleteItemDisplay";
 
+type Team = {
+    id: string;
+    full_name: string;
+    abrv: string;
+    img: string;
+    bg: string;
+    selected: boolean;
+};
+
+interface ListType {
+    id: string;
+    listName: string;
+    teams: Team[];
+}
+
 export default function ListPage() {
     const [showDeleteDisplay, setShowDeleteDisplay] = useState<boolean>(false);
     const [itemToDelete] = useState<string | null>(null);
@@ -17,10 +32,11 @@ export default function ListPage() {
             const user = auth.currentUser;
             if (user) {
                 try {
-                    const lists = await fetchUserLists(user.uid);
-                    const formattedLists = lists.map(list => ({
+                    const lists = await fetchUserLists(user.uid) as ListType[];
+                    console.log(lists);
+                    const formattedLists = lists.map((list: ListType) => ({
                         id: list.id,
-                        name: list.name,
+                        name: list.listName,
                         teams: list.teams
                     }));
                     setLocalLists(formattedLists);

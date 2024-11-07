@@ -10,6 +10,8 @@ import Footer from "../components/Footer";
 import { useRouter } from "next/navigation";
 import { addUserList, auth } from '../firebase'
 import { AddNewListDisplay } from "../components/AddNewListDisplay";
+import { v4 as uuidv4 } from 'uuid';
+import { User } from "firebase/auth";
 
 const button_styles = "p-2 rounded-md text-md transition duration-200 ease-in hover:scale-105 mx-2 w-48 shadow-lg";
 
@@ -22,11 +24,17 @@ type Team = {
     selected: boolean;
 };
 
+interface ListType {
+    id: string;
+    name: string;
+    teams: Team[];
+}
+
 export default function ResultsPage() {
     const [name, setName] = useState<string>("");
     const [user, setUser] = useState<User | null>(null);
     const [newListDisplay, setNewListDisplay] = useState<boolean>(false);
-    const { finalTeamList, setLocalLists }: { finalTeamList: Team[], setLocalLists: React.Dispatch<React.SetStateAction<Team[][]>> } = useAppContext();
+    const { finalTeamList, setLocalLists }: { finalTeamList: Team[], setLocalLists: React.Dispatch<React.SetStateAction<ListType[]>> } = useAppContext();
     const imageRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
 
@@ -50,7 +58,12 @@ export default function ResultsPage() {
     }
 
     const addNewList = (newListItem: Team[], listName: string) => {
-        setLocalLists(prev => [...prev, newListItem])
+        const newList: ListType = {
+            id: uuidv4(),
+            name: listName,
+            teams: newListItem
+        };
+        setLocalLists(prev => [...prev, newList]);
         addUserList(newListItem, listName);
         setNewListDisplay(false);
         router.push('/');
