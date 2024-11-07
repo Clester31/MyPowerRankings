@@ -45,9 +45,9 @@ export default function List({ id, name, list, listIndex, setLocalLists }: ListT
                     onConfirm={() => {
                         deleteUserList(itemToDelete!);
                         setLocalLists(prev => [...prev.slice(0, listIndex), ...prev.slice(listIndex + 1)]);
-                        setShowDeleteDisplay(false); // Hide the delete display after confirming
+                        setShowDeleteDisplay(false);
                     }}
-                    onCancel={() => setShowDeleteDisplay(false)} // Hide the delete display on cancel
+                    onCancel={() => setShowDeleteDisplay(false)}
                 />
             )}
             <div className="flex flex-row mb-1">

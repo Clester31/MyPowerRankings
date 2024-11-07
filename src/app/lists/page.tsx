@@ -9,7 +9,7 @@ import DeleteItemDisplay from "../components/DeleteItemDisplay";
 
 export default function ListPage() {
     const [showDeleteDisplay, setShowDeleteDisplay] = useState<boolean>(false);
-    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+    const [itemToDelete] = useState<string | null>(null);
     const { localLists, setLocalLists } = useAppContext();
 
     useEffect(() => {
@@ -20,11 +20,10 @@ export default function ListPage() {
                     const lists = await fetchUserLists(user.uid);
                     const formattedLists = lists.map(list => ({
                         id: list.id,
-                        name: list.listName,
+                        name: list.name,
                         teams: list.teams
                     }));
                     setLocalLists(formattedLists);
-    
                     console.log("local lists", formattedLists); 
                 } catch (error) {
                     console.error("failed to fetch lists", error);
@@ -35,17 +34,16 @@ export default function ListPage() {
     }, [setLocalLists]);
 
     const handleDeleteConfirm = (id: string) => {
-        // Logic to delete the item
         setLocalLists(prev => prev.filter(list => list.id !== id));
-        setShowDeleteDisplay(false); // Hide the delete display after confirming
+        setShowDeleteDisplay(false); 
     };
 
     return (
         <div className="flex flex-col min-h-screen">
             {showDeleteDisplay && (
                 <DeleteItemDisplay 
-                    onConfirm={() => handleDeleteConfirm(itemToDelete!)} // Confirm delete
-                    onCancel={() => setShowDeleteDisplay(false)} // Cancel delete
+                    onConfirm={() => handleDeleteConfirm(itemToDelete!)} 
+                    onCancel={() => setShowDeleteDisplay(false)} 
                 />
             )}
             <div className="mt-16 p-2">
@@ -59,10 +57,6 @@ export default function ListPage() {
                             list={listItem.teams} 
                             listIndex={listIndex} 
                             setLocalLists={setLocalLists} 
-                            onDelete={() => {
-                                setItemToDelete(listItem.id); // Set the item to delete
-                                setShowDeleteDisplay(true); // Show the delete confirmation display
-                            }}
                         />
                     ))}
                 </div>

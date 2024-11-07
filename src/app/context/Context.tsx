@@ -21,6 +21,7 @@ interface ContextType {
 }
 
 interface ListType {
+    id: string;
     name: string;
     teams: Team[];
 }

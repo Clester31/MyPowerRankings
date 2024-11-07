@@ -30,6 +30,15 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
+type Team = {
+  id: string;
+  full_name: string;
+  abrv: string;
+  img: string;
+  bg: string;
+  selected: boolean;
+};
+
 // Function to create a new user account with email and password
 export const createAccountWithEmail = async (email: string, password: string): Promise<UserCredential> => {
   try {
@@ -93,9 +102,8 @@ export const logOut = async (): Promise<void> => {
     throw error;
   }
 };
-
 // methods for adding users lists to their account
-export const addUserList = async (listData, listName: string) => {
+export const addUserList = async (listData: Team[], listName: string) => {
   const user = auth.currentUser;
   if (!user) throw new Error("User not signed in");
 
